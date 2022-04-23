@@ -48,7 +48,7 @@ const products = async (req, res) => {
         }
 
         if (!validator.isRs(currencyFormat)) {
-            return res.status(400).send({ status: false, msg: "Currency Format must be Rs" })
+            return res.status(400).send({ status: false, msg: "Currency Format must be ₹" })
         }
 
         if (!validator.isValid(availableSizes)) {
@@ -194,7 +194,7 @@ const updateProduct = async function (req, res) {
 
         let files = req.files
 
-        if(!(data && files)){
+        if(!(data)){
             return res.status(400).send({status:false,message:"data doesnt exist"})
         }
 
@@ -253,7 +253,7 @@ const updateProduct = async function (req, res) {
             }
     
             if (!validator.isRs(currencyFormat)) {
-                return res.status(400).send({ status: false, msg: "Currency Format must be Rs" })
+                return res.status(400).send({ status: false, msg: "Currency Format must be ₹" })
             }
         }
 

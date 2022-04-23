@@ -30,6 +30,10 @@ const register = async function (req, res) {
             return res.status(400).send({ status: false, msg: "Please enter Valid Last Name" })
         }
 
+        if (!validator.isValid(address)) {
+            return res.status(400).send({ status: false, msg: "Please enter Valid Address" })
+        }
+
         if (!validator.isValid(email)) {
             return res.status(400).send({ status: false, msg: "Please enter a Email Id" })
 

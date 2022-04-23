@@ -118,7 +118,7 @@ const updateOrder = async function (req, res) {
 
             if (checkOrder.status == 'pending') {
 
-                if (!validator.isStatus(status)) {
+                if (!validator.isValid(status)) {
                     return res.status(400).send({ status: false, msg: "Please enter a valid status" })
 
                 }
@@ -139,7 +139,7 @@ const updateOrder = async function (req, res) {
 
             if (checkOrder.status == 'pending') {
 
-                if (!validator.isStatus(status)) {
+                if (!validator.isValid(status)) {
                     return res.status(400).send({ status: false, msg: "Please enter a valid status" })
                 }
 
