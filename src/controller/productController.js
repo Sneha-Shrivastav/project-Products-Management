@@ -79,7 +79,7 @@ const products = async (req, res) => {
 
         const product = await productModel.create(obj)
 
-        return res.status(201).send({ status: true, msg: "Product Succesfully Created", data: product })
+        return res.status(201).send({ status: true, message: "Success", data: product })
     }
     catch (error) {
         //console.log(error)
@@ -147,7 +147,7 @@ const getProductbyQuery = async function (req, res) {
                 if (products.length == 0) {
                     return res.status(404).send({ status: false, message: "No data found that matches your search" })
                 }
-                return res.status(200).send({ status: true, message: "Results", count: products.length, data: products })
+                return res.status(200).send({ status: true, message: "Success", count: products.length, data: products })
             }
 
         }

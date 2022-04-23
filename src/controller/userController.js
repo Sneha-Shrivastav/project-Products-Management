@@ -20,10 +20,6 @@ const register = async function (req, res) {
 
         const { fname, lname, email, phone, address } = data
 
-        if(!validator.isValid(address)){
-          return res.status(400).send({status : false, message:"Address is mandatory"})
-        }
-
 
         if (!validator.isValid(fname)) {
             return res.status(400).send({ status: false, msg: "Please enter Valid First Name" })
@@ -43,7 +39,7 @@ const register = async function (req, res) {
 
         }
 
-        const duplicateEmail = await userModel.findOne({ email }) // Check Duplicacy of Email
+        const duplicateEmail = await userModel.findOne({ email })
         if (duplicateEmail) {
             return res.status(400).send({ status: false, msg: "This Email ID already exisits in out Database...Please Enter a unique email id" })
         }
@@ -57,7 +53,7 @@ const register = async function (req, res) {
             return res.status(400).send({ status: false, message: "Mobile Number is not valid" })
         }
 
-        const duplicatePhone = await userModel.findOne({ phone }) // Check Duplicacy of Mobile
+        const duplicatePhone = await userModel.findOne({ phone })
         if (duplicatePhone) {
             return res.status(400).send({ status: false, msg: "This Phone Number already exisits in out Database...Please Enter a unique Phone Number" })
         }
@@ -184,7 +180,7 @@ const login = async function (req, res) {
             exp: Math.floor(Date.now() / 1000) + 1 * 60 * 60    //1 hours:minute:second
         }, "group11")
 
-        res.setHeader("x-api-key", token) // Setting key Value pair of Token
+        res.setHeader("x-api-key", token)
         const output = {
             userId: user._id,
             token: token
@@ -222,20 +218,6 @@ const updateProfile = async (req, res) => {
     try {
         let data = req.body
         const id = req.params.userId
-        let files = req.files
-
-        if (files) {
-            //  let files = req.files
-              if (files && files.length > 0) {
-                  var uploadedFileURL = await aws.uploadFile(files[0]) // File Uploaded Here
-  
-              }
-          }
-  
-        
-        if(!(data && files)){
-            return res.status(400).send({status:false,message:"data doesnt exist"}) 
-        }
 
         if (!validator.isValidobjectId(id)) {
             res.status(400).send({ status: false, message: `${id} is not a valid user id ` })
@@ -246,7 +228,13 @@ const updateProfile = async (req, res) => {
 
         if (!userPresent) return res.status(404).send({ status: false, msg: "User not found" })
 
-        const { fname, lname, email, phone, address, password } = data  //Destructuring
+
+        if (!validator.isValidReqBody(data)) {
+            if(!(validator.isValidReqBody(req.files)))
+            return res.status(400).send({ status: false, msg: "Please enter Data to be updated" })
+        }
+
+        const { fname, lname, email, phone, address, password } = data
 
         if (fname) {
             if (!validator.isValid(fname)) {
@@ -281,10 +269,17 @@ const updateProfile = async (req, res) => {
             }
         }
 
-       
+        if (req.files) {
+            let files = req.files
+            if (files && files.length > 0) {
+                var uploadedFileURL = await aws.uploadFile(files[0])
+
+            }
+        }
+
 
         if (address) {
-            const a = JSON.parse(address)  // Converting Striing to JSON
+            const a = JSON.parse(address)
             const { shipping, billing } = a
 
             if (!validator.isValid(shipping.street)) {

@@ -119,8 +119,6 @@ const getCart = async function (req, res) {
 }
 
 
-
-
 const deleteCart = async function (req, res) {
     try {
         userId = req.params.userId;
@@ -135,36 +133,65 @@ const deleteCart = async function (req, res) {
         if (!searchCart) {
             return res.status(404).send({ status: false, msg: "User does not have any cart" })
         }
+        const { items, totalPrice } = searchCart
 
-        let { items, totalItems, totalPrice } = searchCart
-
-        if (items.length == 0 && totalItems == 0) {
-            return res.status(400).send({ status: false, msg: "Cart Is Already Empty" })
+        if (items.length == 0 && totalPrice == 0) {
+            return res.status(400).send({ status: false, msg: "Cart is Already Empty" })
         }
 
-        if (items.length > 0) {
-            items.pop();
-        }
-
-        if (items.length == 0) {
-            totalItems = totalItems * items.length;
-            totalPrice = totalPrice * items.length;
-        }
-
-        let empty = {
-            userId: userId,
-            items: items,
-            totalItems: totalItems,
-            totalPrice: totalPrice
-        }
-        let emptyCart = await cartModel.findOneAndUpdate({ userId }, { $set: empty }, { new: true })
-        return res.status(204).send({ status: true, msg: "Cart deleted Successfully", data: emptyCart })
+        let emptyCart = await cartModel.findOneAndUpdate({ userId }, { $set: { items: [], totalPrice: 0, totalItems: 0 } }, { new: true })
+        return res.status(204).send({ status: true, message: "Cart deleted Successfully", data: emptyCart })
     }
 
     catch (error) {
         res.status(500).send({ status: false, msg: error.message })
     }
 }
+
+// const deleteCart = async function (req, res) {
+//     try {
+//         userId = req.params.userId;
+
+//         let findUser = await userModel.findById(userId)
+//         if (!findUser) {
+//             return res.status(404).send({ status: false, msg: "User not Found" })
+//         }
+
+//         let searchCart = await cartModel.findOne({ userId: userId })
+
+//         if (!searchCart) {
+//             return res.status(404).send({ status: false, msg: "User does not have any cart" })
+//         }
+
+//         let { items, totalItems, totalPrice } = searchCart
+
+//         if (items.length == 0 && totalItems == 0) {
+//             return res.status(400).send({ status: false, msg: "Cart Is Already Empty" })
+//         }
+
+//         if (items.length > 0) {
+//             items.pop();
+//         }
+
+//         if (items.length == 0) {
+//             totalItems = totalItems * items.length;
+//             totalPrice = totalPrice * items.length;
+//         }
+
+//         let empty = {
+//             userId: userId,
+//             items: items,
+//             totalItems: totalItems,
+//             totalPrice: totalPrice
+//         }
+//         let emptyCart = await cartModel.findOneAndUpdate({ userId }, { $set: empty }, { new: true })
+//         return res.status(204).send({ status: true, msg: "Cart deleted Successfully", data: emptyCart })
+//     }
+
+//     catch (error) {
+//         res.status(500).send({ status: false, msg: error.message })
+//     }
+// }
 
 
 
